@@ -9,6 +9,7 @@
     <string name="minutes">%1$d minutes ago</string>
     <string name="hours">%1$d hours ago</string>
     <string name="days">%1$d days ago</string>
-    <string name="something_went_wrong">Something went wrong , please try again</string>
+    <string name="something_went_wrong">Something went wrong , please check your internet connection</string>
+    <string name="empty_search_tweets">Empty , search tweets</string>
 
 </resources>

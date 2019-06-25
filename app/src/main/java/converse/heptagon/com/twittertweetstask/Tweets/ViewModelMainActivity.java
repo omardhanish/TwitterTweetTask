@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import java.util.ArrayList;;
 import java.util.List;
 
 import converse.heptagon.com.twittertweetstask.BaseViewModel;
@@ -58,21 +57,22 @@ public class ViewModelMainActivity extends BaseViewModel {
        getLoadList().setValue(object);
    }
 
-    private void showLoader(){
+    public void showLoader(){
         Bundle bundle = new Bundle();
         bundle.putString(EVENT ,"SHOW_LOADER");
         getBundleEvent().setValue(bundle);
    }
 
-    private void hideLoader(){
+    public void hideLoader(){
        Bundle bundle = new Bundle();
        bundle.putString(EVENT ,"HIDE_LOADER");
        getBundleEvent().setValue(bundle);
    }
 
-   private void emptydata(){
+   public void emptydata(boolean isEmpty){
        Bundle bundle = new Bundle();
        bundle.putString(EVENT ,"EMPTY_DATA");
+       bundle.putBoolean("IS_EMPTY" , isEmpty);
        getBundleEvent().setValue(bundle);
    }
 

@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity
     private ViewModelMainActivity mModel;
     private RecyclerView mRecyclerView;
     private AdapterTweets mAdapterTweets;
+    private LinearLayout mLlempty;
     private List<Tweet> mTweetList = new ArrayList<>();
     private String mSearchData;
     private Handler mHandler;
@@ -45,22 +47,25 @@ public class MainActivity extends AppCompatActivity
 
         mHandler = new Handler();
         mModel = ViewModelProviders.of(this).get(ViewModelMainActivity.class);
+
+        startObserving();
         initViews();
 
         mAdapterTweets = new AdapterTweets(this , new TweetDateFormatter() , mTweetList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mAdapterTweets);
 
-        startObserving();
+        mModel.emptydata(true);
     }
 
     private void initViews(){
         mRecyclerView = findViewById(R.id.recyclerView);
+        mLlempty = findViewById(R.id.ll_empty);
     }
 
     private void startObserving()
     {
-        final Observer<Bundle> nameObserver = new Observer<Bundle>() {
+        final Observer<Bundle> commonObserver = new Observer<Bundle>() {
             @Override
             public void onChanged(@Nullable final Bundle bundleEvent) {
                 if (bundleEvent != null) {
@@ -73,11 +78,18 @@ public class MainActivity extends AppCompatActivity
                                 MyProgressDialog.dismiss();
                                 break;
                             case "ERROR_LOADER":
+                                mTweetList.clear();
+                                MyProgressDialog.dismiss();
+                                removeUpdates();
                                 Snackbar.make(findViewById(android.R.id.content), getString(R.string.something_went_wrong),Snackbar.LENGTH_SHORT).show();
                                 break;
                             case "EMPTY_DATA":
-                                mTweetList.clear();
-                                Snackbar.make(findViewById(android.R.id.content),"Your Text Here",Snackbar.LENGTH_SHORT).show();
+                                if(bundleEvent.getBoolean("IS_EMPTY")){
+                                    mTweetList.clear();
+                                    mLlempty.setVisibility(View.VISIBLE);
+                                }else {
+                                    mLlempty.setVisibility(View.INVISIBLE);
+                                }
                                 break;
                         }
                     }
@@ -85,7 +97,7 @@ public class MainActivity extends AppCompatActivity
             }
         };
 
-        mModel.getBundleEvent().observe(this, nameObserver);
+        mModel.getBundleEvent().observe(this, commonObserver);
 
         final Observer<List<Tweet>> loadListObservor = new Observer<List<Tweet>>() {
             @Override
@@ -94,6 +106,12 @@ public class MainActivity extends AppCompatActivity
                 {
                     mTweetList.clear();
                     mTweetList.addAll(tweets);
+
+                    if(mTweetList.size() > 0)
+                        mModel.emptydata(false);
+                    else
+                        mModel.emptydata(true);
+
 
                     if(mAdapterTweets != null)
                         mAdapterTweets.notifyDataSetChanged();
