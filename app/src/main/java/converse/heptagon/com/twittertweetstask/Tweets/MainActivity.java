@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity
                                 MyProgressDialog.dismiss();
                                 break;
                             case "ERROR_LOADER":
-                                mTweetList.clear();
                                 MyProgressDialog.dismiss();
                                 removeUpdates();
                                 Snackbar.make(findViewById(android.R.id.content), getString(R.string.something_went_wrong),Snackbar.LENGTH_SHORT).show();
